@@ -37,3 +37,20 @@ $container->set(
     }
 );
 
+$container->set(
+    'dispatcher',
+    function () {
+        $eventsManager = new \Phalcon\Events\Manager();
+
+        $eventsManager->attach(
+            'dispatch:beforeExecuteRoute',
+            new \App\Plugins\SecurityPlugin()
+        );
+
+        $containerspatcher = new \Phalcon\Mvc\Dispatcher();
+
+        $containerspatcher->setEventsManager($eventsManager);
+
+        return $containerspatcher;
+    }
+);

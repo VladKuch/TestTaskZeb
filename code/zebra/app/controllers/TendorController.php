@@ -12,9 +12,7 @@ class TendorController extends Controller {
     public function indexAction()
     {
         $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
-
-        $this->response->setJsonContent(["test" => "Hello World"], JSON_PRETTY_PRINT);
-        return $this->response;
+        return $this->response->setStatusCode(200)->setContent("Hello World!");
     }
 
     public function getAction(int $code = 0)
@@ -48,7 +46,6 @@ class TendorController extends Controller {
 
             $save_arr = [$code, $number, $status, $name];
             $tendors = new TendorImportHelper();
-          //  $auth = $this->request->getBasicAuth();
             $result = $tendors->addRow($save_arr);
             $this->response->setJsonContent($result, JSON_PRETTY_PRINT);
             return $this->response;
