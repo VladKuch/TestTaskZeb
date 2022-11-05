@@ -2,7 +2,6 @@
 
 use Phalcon\Di\FactoryDefault;
 use Phalcon\Di\DiInterface;
-use Phalcon\Session\Adapter\Stream;
 use Phalcon\Mvc\View;
 
 $container = new FactoryDefault();
@@ -36,46 +35,5 @@ $container->set(
             ]
         );
     }
-);
-
-$container->set(
-    "session",
-    function () {
-        $session = new \Phalcon\Session\Manager();
-        $files   = new Stream(
-            [
-                'savePath' => '/tmp'
-            ]
-        );
-        $session->setAdapter($files);
-        $session->start();
-        return $session;
-    }
-);
-
-$container->set(
-    'security',
-    function () {
-        $security = new \Phalcon\Security();
-
-        $security->setWorkFactor(12);
-
-        return $security;
-    },
-    true
-);
-
-$container->set(
-    'crypt',
-    function () use ($config) {
-        $crypt = new \Phalcon\Crypt();
-        $crypt->setCipher('aes256')->useSigning(false);
-        $crypt->setKey(
-            $config->security->encryption_key
-        );
-
-        return $crypt;
-    },
-    true
 );
 

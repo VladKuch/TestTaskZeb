@@ -11,7 +11,6 @@ services:
     build: ./php
     volumes:
       - ./code:/var/www/html
-      - ./php/conf.d/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
   db:
     image: mysql:8.0
     volumes:
