@@ -1,6 +1,6 @@
 <h2>Тестовое задание</h2>
 
-<b>Nginx, PHP 8, Phalcon 5(фреймвёрк), MySQL 8.</b>
+<b>Nginx, PHP 8, Phalcon 5(фреймворк), MySQL 8.</b>
 
 В качестве авторизации для выполнения API запросов используется Basic Auth: username=zebra, password=qwerty123.<br>
 <pre>
