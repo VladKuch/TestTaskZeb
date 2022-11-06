@@ -5,7 +5,7 @@ namespace App\Models;
 use Phalcon\Mvc\Model;
 use Phalcon\Mvc\Model\Behavior\Timestampable;
 
-class Tendor extends Model {
+class Tender extends Model {
     public $code;
     public $number;
     public $status;
@@ -15,6 +15,6 @@ class Tendor extends Model {
 
     public function initialize()
     {
-        $this->setSource('tendors');
+        $this->setSource('tenders');
     }
 }

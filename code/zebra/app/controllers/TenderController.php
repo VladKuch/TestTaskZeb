@@ -3,11 +3,11 @@ namespace App\Controller;
 
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\View;
-use App\Helpers\TendorImportHelper;
+use App\Helpers\TenderImportHelper;
 use Phalcon\Mvc\Model\Query;
 use Phalcon\Di;
 
-class TendorController extends Controller {
+class TenderController extends Controller {
 
     public function indexAction()
     {
@@ -21,7 +21,7 @@ class TendorController extends Controller {
             $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
             $query = new Query(
                 'SELECT t.code, t.number, s.name as status, t.name, DATE_FORMAT(t.updated_at, "%d.%m.%Y %H:%i:%S") as date 
-                FROM App\Models\Tendor as t 
+                FROM App\Models\Tender as t 
                 LEFT JOIN App\Models\Status s ON t.status = s.id 
                 WHERE t.number = :number:',
                 $this->di
@@ -68,7 +68,7 @@ class TendorController extends Controller {
         }
         $query = new Query(
             "SELECT t.code, t.number, s.name as status, t.name, DATE_FORMAT(t.updated_at, '%d.%m.%Y %H:%i:%S') as date 
-            FROM App\Models\Tendor as t 
+            FROM App\Models\Tender as t 
             LEFT JOIN App\Models\Status s ON t.status = s.id
             $where_str 
             ORDER BY t.updated_at $dir",
@@ -94,7 +94,7 @@ class TendorController extends Controller {
             $name =   $this->request->getPost('name');
             if (!empty($number) && !empty($name)) {
                 $save_arr = [$number, $status, $name];
-                $import = new TendorImportHelper();
+                $import = new TenderImportHelper();
                 $result = $import->addRow($save_arr);
                 if (!$result) {
                     $result = ['message' => "Что-то пошло не так."];
@@ -120,7 +120,7 @@ class TendorController extends Controller {
             $files = $this->request->getUploadedFiles();
             $file = reset($files);
             
-            $import = new TendorImportHelper();
+            $import = new TenderImportHelper();
             $result = $import->importFromCSV($file->getTempName());
             if (!$result) {
                 $result = ['message' => "Что-то пошло не так."];

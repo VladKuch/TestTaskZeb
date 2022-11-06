@@ -1,10 +1,10 @@
 <?php
 namespace App\Helpers;
 
-use App\Models\Tendor;
+use App\Models\Tender;
 use App\Models\Status;
 
-class TendorImportHelper {
+class TenderImportHelper {
     private array $keys = ['number', 'status', 'name'];
     private array $statuses = [];
     private array $errors = []; 
@@ -15,22 +15,22 @@ class TendorImportHelper {
     }
 
     /**
-     * Добавить и сохранить тендр
+     * Добавить и сохранить тендeр
      * 
-     * @param array $tendor_data
+     * @param array $tender_data
      * 
      * @return bool
      */
-    public function addRow(array $tendor_data): bool
+    public function addRow(array $tender_data): bool
     {
-        if (!empty($tendor_data)) {
-            return $this->saveTendor($tendor_data);
+        if (!empty($tender_data)) {
+            return $this->saveTender($tender_data);
         }
         return false;
     } 
     
     /**
-     * Импортировать тендоры из CSV файла
+     * Импортировать тендeры из CSV файла
      * 
      * @param string $file_path - путь к временному файлу
      * 
@@ -44,7 +44,7 @@ class TendorImportHelper {
                 while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                     if (!$is_first_row) {
                         $data = array_slice($data, 1, -1);
-                        $this->saveTendor($data);
+                        $this->saveTender($data);
                     } else {
                         $is_first_row = false;
                     }
@@ -59,22 +59,22 @@ class TendorImportHelper {
     }
 
     /**
-     * Сохранить тендр
-     * @param array $tendor_data
+     * Сохранить тендeр
+     * @param array $tender_data
      * 
      * @return bool
      */
-    private function saveTendor(array $tendor_data): bool
+    private function saveTender(array $tender_data): bool
     {
         try {
-            $tendor = new Tendor();
-            $tendor_data = array_combine($this->keys, $tendor_data);
-            $tendor_data['status'] = $this->statuses[$tendor_data['status']] ?? 0;
-            $tendor->assign($tendor_data);
-            $status = $tendor->create();
+            $tender = new Tender();
+            $tender_data = array_combine($this->keys, $tender_data);
+            $tender_data['status'] = $this->statuses[$tender_data['status']] ?? 0;
+            $tender->assign($tender_data);
+            $status = $tender->create();
             return $status;
         } catch (\Throwable $e) {
-            $this->errors['errors'][] = json_encode($tendor_data) . ': ' .$e->getMessage();
+            $this->errors['errors'][] = json_encode($tender_data) . ': ' .$e->getMessage();
             return false;
         }
     }
