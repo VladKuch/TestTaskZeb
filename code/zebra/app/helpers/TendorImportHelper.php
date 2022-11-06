@@ -5,8 +5,9 @@ use App\Models\Tendor;
 use App\Models\Status;
 
 class TendorImportHelper {
-    private array $keys = ['code', 'number', 'status', 'name'];
-    private array $statuses = []; 
+    private array $keys = ['number', 'status', 'name'];
+    private array $statuses = [];
+    private array $errors = []; 
 
     public function __construct() 
     {
@@ -37,16 +38,23 @@ class TendorImportHelper {
      */
     public function importFromCSV(string $file_path): bool 
     {
-        $is_first_row = true;
-        if (($handle = fopen($file, "rb")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                if (!$is_first_row) {
-                    $this->saveTendor($data);
-                } else {
-                    $is_first_row = false;
+        try {
+            $is_first_row = true;
+            if (($handle = fopen($file_path, "rb")) !== FALSE) {
+                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                    if (!$is_first_row) {
+                        $data = array_slice($data, 1, -1);
+                        $this->saveTendor($data);
+                    } else {
+                        $is_first_row = false;
+                    }
                 }
+                fclose($handle);
             }
-            fclose($handle);
+            return true;
+        } catch (\Trowable $e) {
+            $this->errors['errors'][] = $e->getMessage();
+            return false;
         }
     }
 
@@ -58,11 +66,21 @@ class TendorImportHelper {
      */
     private function saveTendor(array $tendor_data): bool
     {
-        $tendor = new Tendor();
-        $tendor_data = array_combine($this->keys, $tendor_data);
-        $tendor_data['status'] = $this->statuses[$tendor_data['status']] ?? 0;
-        $tendor->assign($tendor_data);
+        try {
+            $tendor = new Tendor();
+            $tendor_data = array_combine($this->keys, $tendor_data);
+            $tendor_data['status'] = $this->statuses[$tendor_data['status']] ?? 0;
+            $tendor->assign($tendor_data);
+            $status = $tendor->create();
+            return $status;
+        } catch (\Throwable $e) {
+            $this->errors['errors'][] = json_encode($tendor_data) . ': ' .$e->getMessage();
+            return false;
+        }
+    }
 
-        return $tendor->create();
+    public function getErrors()
+    {
+        return $this->errors;
     }
 }
