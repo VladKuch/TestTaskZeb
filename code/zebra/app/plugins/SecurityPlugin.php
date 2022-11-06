@@ -9,6 +9,9 @@ use App\Helpers\SecurityHelper;
 
 class SecurityPlugin extends Injectable
 {
+    /**
+     * Проверка доступа по Basic Auth перед выполнеием запроса
+     */
     public function beforeExecuteRoute(
         Event $event, 
         Dispatcher $containerspatcher

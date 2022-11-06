@@ -102,7 +102,7 @@ class TenderController extends Controller {
                         $result = $import->getErrors();
                     }
                 } else {
-                    $result = ['message' => "Тендор успешно добавлен."];
+                    $result = ['message' => "Тендер успешно добавлен."];
                 }
             } else {
                 $result = ['message' => "number и name - обязательные параметры."];
@@ -128,7 +128,7 @@ class TenderController extends Controller {
                     $result = $import->getErrors();
                 }
             } else {
-                $result = ['message' => "Тендоры успешно импортированы."];
+                $result = ['message' => "Тендеры успешно импортированы."];
             }
             $this->response->setJsonContent($result, JSON_PRETTY_PRINT);
            

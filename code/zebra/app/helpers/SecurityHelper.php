@@ -4,7 +4,11 @@ namespace App\Helpers;
 use \App\Models\Whitelist;
 
 class SecurityHelper {
-    public static function checkAuthentification($login, $password)
+
+    /**
+     * проверка логина и пароля для доступа
+     */
+    public static function checkAuthentification(string $login, string $password): bool
     {
         $whitelist = new Whitelist();
 

@@ -79,7 +79,10 @@ class TenderImportHelper {
         }
     }
 
-    public function getErrors()
+    /**
+     * Получить список ошибок
+     */
+    public function getErrors(): array
     {
         return $this->errors;
     }

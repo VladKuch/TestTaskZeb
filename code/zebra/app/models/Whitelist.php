@@ -15,7 +15,9 @@ class Whitelist extends Model {
     {
         $this->setSource('whitelist');
     }
-
+    /**
+     * Событие: перед сохранением хэшировать пароль
+     */
     public function beforeCreate()
     {
         $this->password = hash('sha256', $this->password);
