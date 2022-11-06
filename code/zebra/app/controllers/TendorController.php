@@ -92,18 +92,22 @@ class TendorController extends Controller {
             $number = $this->request->getPost('number');
             $status = $this->request->getPost('status');
             $name =   $this->request->getPost('name');
-
-            $save_arr = [$number, $status, $name];
-            $import = new TendorImportHelper();
-            $result = $import->addRow($save_arr);
-            if (!$result) {
-                $result = ['message' => "Что-то пошло не так."];
-                if (!empty($import->getErrors())) {
-                    $result = $import->getErrors();
+            if (!empty($number) && !empty($name)) {
+                $save_arr = [$number, $status, $name];
+                $import = new TendorImportHelper();
+                $result = $import->addRow($save_arr);
+                if (!$result) {
+                    $result = ['message' => "Что-то пошло не так."];
+                    if (!empty($import->getErrors())) {
+                        $result = $import->getErrors();
+                    }
+                } else {
+                    $result = ['message' => "Тендор успешно добавлен."];
                 }
             } else {
-                $result = ['message' => "Тендор успешно добавлен."];
+                $result = ['message' => "number и name - обязательные параметры."];
             }
+           
             
             $this->response->setJsonContent($result, JSON_PRETTY_PRINT);
             return $this->response;

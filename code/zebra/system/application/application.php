@@ -27,7 +27,7 @@ $loader->register();
 
 $application = new Application($container);
 
-$url = $_SERVER["REQUEST_URI"];
+$url = str_replace("/api", "",$_SERVER["REQUEST_URI"]);
 
 try {
     $response = $application->handle(
@@ -35,5 +35,6 @@ try {
     );
     $response->send();
 } catch (\Exception $e) {
+    echo $url;
 	echo $e->getMessage() . '<br>' . $e->getTraceAsString();
 }
