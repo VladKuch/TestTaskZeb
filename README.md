@@ -1,4 +1,5 @@
 <h2>Тестовое задание</h2>
+В качестве авторизации для выполнения API запросов используется Basic Auth: username=zebra, password=qwerty123.
 <pre>
      GET: http://localhost/api/tendеr/get/{Номер} - Получить тендер по номеру.
      GET: http://localhost/api/tendеr/fetch?name=Название&date=05.11.2022&order=desc - Получить список всех тендеров.
