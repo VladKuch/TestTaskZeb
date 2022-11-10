@@ -4,7 +4,7 @@ $container->set(
     "router", 
     function () {
         $router = new \Phalcon\Mvc\Router();
-        $router->setDefaultNamespace("App\Controller");
+        $router->setDefaultNamespace("App\Controllers");
         return $router;
     }
 );

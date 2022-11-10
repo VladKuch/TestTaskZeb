@@ -1,11 +1,10 @@
 <?php
-namespace App\Controller;
+namespace App\Controllers;
 
 use Phalcon\Mvc\Controller;
 use Phalcon\Mvc\View;
 use App\Helpers\TenderImportHelper;
-use Phalcon\Mvc\Model\Query;
-use Phalcon\Di;
+use App\Repositories\TenderRepository;
 
 class TenderController extends Controller {
 
@@ -17,22 +16,17 @@ class TenderController extends Controller {
 
     public function getAction(string $number = '')
     {
+        $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
+        $result = [];
+
         if (!empty($number)) {
-            $this->view->setRenderLevel(View::LEVEL_NO_RENDER);
-            $query = new Query(
-                'SELECT t.code, t.number, s.name as status, t.name, DATE_FORMAT(t.updated_at, "%d.%m.%Y %H:%i:%S") as date 
-                FROM App\Models\Tender as t 
-                LEFT JOIN App\Models\Status s ON t.status = s.id 
-                WHERE t.number = :number:',
-                $this->di
-            );
-    
-            $result = reset($query->execute(['number' => $number])->toArray());
+            $result = TenderRepository::findOne(['number' => $number]);
         }
-        
+
         if (empty($result)) {
             $result = ['message' => "По данному запросу ничего не было найдено."];
         }
+
         $this->response->setJsonContent($result, JSON_PRETTY_PRINT);
 
         return $this->response;
@@ -45,37 +39,8 @@ class TenderController extends Controller {
         $name =   $this->request->getQuery('name');
         $date = $this->request->getQuery('date');
         $order = $this->request->getQuery('order');
-        $directions = ['asc', 'desc'];
-        $where_str = '';
-        $where_arr = [];
-        $execute_arr = [];
-        $dir = 'asc';
-        if (!empty($name)) {
-                $where_arr[] = 't.name LIKE :name:';
-                $execute_arr['name'] = '%'.$name.'%';
-        }
 
-        // По описанию задания понял, что нужно фильтровать именно по дате, не учитывая время. Возможно ошибся
-        if (!empty($date)) {
-            $where_arr[] = "DATE(t.updated_at) = STR_TO_DATE(:date:, '%d.%m.%Y')";
-            $execute_arr['date'] = $date;
-        } 
-        if (!empty($where_arr)) {
-            $where_str = " WHERE " . implode(', ', $where_arr);
-        }
-        if (!empty($order) && in_array(strtolower($order), $directions)) {
-            $dir = $order;
-        }
-        $query = new Query(
-            "SELECT t.code, t.number, s.name as status, t.name, DATE_FORMAT(t.updated_at, '%d.%m.%Y %H:%i:%S') as date 
-            FROM App\Models\Tender as t 
-            LEFT JOIN App\Models\Status s ON t.status = s.id
-            $where_str 
-            ORDER BY t.updated_at $dir",
-            $this->di
-        );
-
-        $result = $query->execute($execute_arr)->toArray();
+        $result = TenderRepository::findAll($name, $date, $order);
 
         if (empty($result)) {
             $result = ['message' => "По данному запросу ничего не было найдено."];
