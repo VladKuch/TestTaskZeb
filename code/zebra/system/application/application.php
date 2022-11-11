@@ -11,15 +11,17 @@ $loader->setDirectories(
         APP_PATH . '/models/',
         APP_PATH . '/helpers/',
         APP_PATH . '/plugins/',
+        APP_PATH . '/repositories/'
     ]
 );
 
 $loader->setNamespaces(
     [
-        'App\Controller'  => APP_PATH . '/controllers/',
+        'App\Controllers'  => APP_PATH . '/controllers/',
         'App\Models'      => APP_PATH . '/models/',
         'App\Helpers'     => APP_PATH . '/helpers/',
         'App\Plugins'     => APP_PATH . '/plugins/',
+        'App\Repositories'     => APP_PATH . '/repositories/',
     ]
 );
 
@@ -35,6 +37,5 @@ try {
     );
     $response->send();
 } catch (\Exception $e) {
-    echo $url;
 	echo $e->getMessage() . '<br>' . $e->getTraceAsString();
 }
