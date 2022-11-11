@@ -40,7 +40,7 @@ class TenderController extends Controller {
         $date = $this->request->getQuery('date');
         $order = $this->request->getQuery('order');
 
-        $result = TenderRepository::findAll($name, $date, $order);
+        $result = TenderRepository::findByNameAndDate($name, $date, $order);
 
         if (empty($result)) {
             $result = ['message' => "По данному запросу ничего не было найдено."];

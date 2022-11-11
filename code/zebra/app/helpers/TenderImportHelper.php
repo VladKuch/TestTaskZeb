@@ -33,23 +33,19 @@ class TenderImportHelper {
      * 
      * @param string $file_path - путь к временному файлу
      * 
-     * @return true  
      */
-    public function importFromCSV(string $file_path): bool 
+    public function importFromCSV(string $file_path)
     {
-        $is_first_row = true;
-        if (($handle = fopen($file_path, "rb")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                if (!$is_first_row) {
-                    $data = array_slice($data, 1, -1);
-                    $this->saveTender($data);
-                } else {
-                    $is_first_row = false;
-                }
-            }
-            fclose($handle);
+        if (($handle = fopen($file_path, "rb")) == FALSE) {
+            throw new \Exception("Не удалось открыть файл");
         }
-        return true;
+        
+        fgetcsv($handle, 1000, ",");
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                $data = array_slice($data, 1, -1);
+                $this->saveTender($data);
+        }
+        fclose($handle);
     }
 
     /**
