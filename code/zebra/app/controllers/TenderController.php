@@ -40,7 +40,7 @@ class TenderController extends Controller {
         $date = $this->request->getQuery('date');
         $order = $this->request->getQuery('order');
 
-        $result = TenderRepository::findAll($name, $date, $order);
+        $result = TenderRepository::findByNameAndDate($name, $date, $order);
 
         if (empty($result)) {
             $result = ['message' => "По данному запросу ничего не было найдено."];
@@ -57,22 +57,15 @@ class TenderController extends Controller {
             $number = $this->request->getPost('number');
             $status = $this->request->getPost('status');
             $name =   $this->request->getPost('name');
-            if (!empty($number) && !empty($name)) {
-                $save_arr = [$number, $status, $name];
+
+            try {
+                \App\Helpers\ValidateHelper::validateInputData(['number' => $number, 'name' => $name]);
                 $import = new TenderImportHelper();
-                $result = $import->addRow($save_arr);
-                if (!$result) {
-                    $result = ['message' => "Что-то пошло не так."];
-                    if (!empty($import->getErrors())) {
-                        $result = $import->getErrors();
-                    }
-                } else {
-                    $result = ['message' => "Тендер успешно добавлен."];
-                }
-            } else {
-                $result = ['message' => "number и name - обязательные параметры."];
-            }
-           
+                $import->addRow([$number, $status, $name]);
+                $result = ['message' => "Тендер успешно добавлен."];
+            } catch(\Throwable $error) {
+                $result = ['message' => $error->getMessage()];
+            }  
             
             $this->response->setJsonContent($result, JSON_PRETTY_PRINT);
             return $this->response;
@@ -84,16 +77,12 @@ class TenderController extends Controller {
         if ($this->request->isPost()) {
             $files = $this->request->getUploadedFiles();
             $file = reset($files);
-            
-            $import = new TenderImportHelper();
-            $result = $import->importFromCSV($file->getTempName());
-            if (!$result) {
-                $result = ['message' => "Что-то пошло не так."];
-                if (!empty($import->getErrors())) {
-                    $result = $import->getErrors();
-                }
-            } else {
+            try {
+                $import = new TenderImportHelper();
+                $import->importFromCSV($file->getTempName());
                 $result = ['message' => "Тендеры успешно импортированы."];
+            } catch (\Throwable $error) {
+                $result = ['message' => $error->getMessage()];
             }
             $this->response->setJsonContent($result, JSON_PRETTY_PRINT);
            

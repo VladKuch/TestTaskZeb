@@ -31,7 +31,7 @@ class TenderRepository {
         return reset($query->execute($params)->toArray());
     }
 
-    public static function findAll($name, $date, $order)
+    public static function findByNameAndDate($name, $date, $order)
     {
         $di = Di::getDefault();
         $directions = ['asc', 'desc'];
