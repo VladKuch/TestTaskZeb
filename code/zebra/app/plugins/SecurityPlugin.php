@@ -16,18 +16,17 @@ class SecurityPlugin extends Injectable
         Event $event, 
         Dispatcher $containerspatcher
     ) {
-        $auth = $this->request->getBasicAuth();
-        if (!empty($auth)) {
+        try {
+            $auth = $this->request->getBasicAuth();
             list($login, $password) = array_values($auth);
-            
-            if (!empty($login) && !empty($password)) {
-                if (SecurityHelper::checkAuthentification($login, $password)) {
-                    return true;
-                }
+            if (!SecurityHelper::checkAuthentification($login, $password)) {
+               throw new \Exception("Security issue!");
             }
+            return true;
+        } catch (\Throwable $error){
+            $this->response->setStatusCode(401);
+            return false;
         }
-
-        $this->response->setStatusCode(401);
-        return false;
+       
     }
 }
