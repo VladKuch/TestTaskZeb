@@ -16,12 +16,14 @@ class Status extends Model {
     public static function fetch(): array
     {
         $tmp = self::find()->toArray();
-        if (!empty($tmp)) {
-            $keys = array_column($tmp, 'name');
-            $values = array_column($tmp, 'id');
-
-            return array_combine($keys, $values);
+        
+        if (empty($tmp)) {
+            return [];
         }
-        return [];
+
+        $keys = array_column($tmp, 'name');
+        $values = array_column($tmp, 'id');
+
+        return array_combine($keys, $values);
     }
 }

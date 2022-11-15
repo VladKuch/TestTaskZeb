@@ -53,40 +53,45 @@ class TenderController extends Controller {
 
     public function addAction()
     {
-        if ($this->request->isPost()) {
-            $number = $this->request->getPost('number');
-            $status = $this->request->getPost('status');
-            $name =   $this->request->getPost('name');
-
-            try {
-                \App\Helpers\ValidateHelper::validateInputData(['number' => $number, 'name' => $name]);
-                $import = new TenderImportHelper();
-                $import->addRow([$number, $status, $name]);
-                $result = ['message' => "Тендер успешно добавлен."];
-            } catch(\Throwable $error) {
-                $result = ['message' => $error->getMessage()];
-            }  
-            
-            $this->response->setJsonContent($result, JSON_PRETTY_PRINT);
-            return $this->response;
+        if (!$this->request->isPost()) {
+            return $this->response->setStatusCode(404);
         }
+
+        $number = $this->request->getPost('number');
+        $name =   $this->request->getPost('name');
+        $status = $this->request->getPost('status');
+
+        try {
+            \App\Helpers\ValidateHelper::validateInputData(['number' => $number, 'name' => $name, 'status' => $status]);
+            $import = new TenderImportHelper();
+            $import->addRow([$number, $status, $name]);
+            $result = ['message' => "Тендер успешно добавлен."];
+        } catch(\Throwable $error) {
+            $result = ['message' => $error->getMessage()];
+        }  
+        
+        $this->response->setJsonContent($result, JSON_PRETTY_PRINT);
+        return $this->response;
+        
     }
 
     public function importAction()
     {
-        if ($this->request->isPost()) {
-            $files = $this->request->getUploadedFiles();
-            $file = reset($files);
-            try {
-                $import = new TenderImportHelper();
-                $import->importFromCSV($file->getTempName());
-                $result = ['message' => "Тендеры успешно импортированы."];
-            } catch (\Throwable $error) {
-                $result = ['message' => $error->getMessage()];
-            }
-            $this->response->setJsonContent($result, JSON_PRETTY_PRINT);
-           
-            return $this->response;
+        if (!$this->request->isPost()) {
+            return $this->response->setStatusCode(404);
         }
+
+        $files = $this->request->getUploadedFiles();
+        $file = reset($files);
+        try {
+            $import = new TenderImportHelper();
+            $import->importFromCSV($file->getTempName());
+            $result = ['message' => "Тендеры успешно импортированы."];
+        } catch (\Throwable $error) {
+            $result = ['message' => $error->getMessage()];
+        }
+        $this->response->setJsonContent($result, JSON_PRETTY_PRINT);
+        
+        return $this->response;
     }
 }

@@ -21,7 +21,7 @@ class SecurityHelper {
             ]
         );
         
-        if (isset($whitelist) && $whitelist->password == Whitelist::encryptPassword($password)) {
+        if ($whitelist->password == Whitelist::encryptPassword($password)) {
             return true;
         }
 
